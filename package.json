@@ -39,7 +39,6 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "change-case": "^5.4.4",
     "date-fns": "^4.1.0"
   },
   "repository": {

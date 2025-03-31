@@ -1,5 +1,3 @@
-import { camelCase, capitalCase, dotCase, constantCase, kebabCase, noCase, pascalCase, pascalSnakeCase, pathCase, sentenceCase, snakeCase, trainCase } from "change-case"
-
 import { StringValidator } from "../validators/string"
 
 export namespace StringTransformer {
@@ -7,29 +5,7 @@ export namespace StringTransformer {
 
     export const toUpperCase = (value: string) => value.toUpperCase()
 
-    export const toCamelCase = camelCase
-
-    export const toCapitalCase = capitalCase
-
-    export const toDotCase = dotCase
-
-    export const toConstantCase = constantCase
-
-    export const toKebabCase = kebabCase
-
-    export const toNoCase = noCase
-
-    export const toPascalCase = pascalCase
-
-    export const toPascalSnakeCase = pascalSnakeCase
-
-    export const toPathCase = pathCase
-
-    export const toSentenceCase = sentenceCase
-
-    export const toSnakeCase = snakeCase
-
-    export const toTrainCase = trainCase
+    export const trim = (value: string) => value.trim()
 
     export const toNumber = Number
 
