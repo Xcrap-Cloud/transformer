@@ -36,7 +36,7 @@ export namespace StringTransformer {
 
     export const removeHtmlTags = (value: string) => value.replace(/<\/?[^>]+(>|$)/g, "")
 
-    export const sanetize = (value: string) => value.replace(/[^a-zA-Z0-9\s]/g, "").trim()
+    export const sanitize = (value: string) => value.replace(/[^a-zA-Z0-9\s]/g, "").trim()
 
     export const collapseWhitespace = (value: string) => value.replace(/\s+/g, " ").trim()
     
@@ -47,10 +47,14 @@ export namespace StringTransformer {
             cleanedValue = cleanedValue.replace(new RegExp(`\\${currencySymbol}`, "g"), "")
         }
 
-        cleanedValue = cleanedValue.replace(/[,]/g, "").trim()
+        cleanedValue = cleanedValue
+            .replace(/\s/g, "")
+            .replace(/[,](?=\d{3})/g, "")
+            .replace(/[,]/g, ".")
+
         const number = Number(cleanedValue)
 
-        return number
+        return isNaN(number) ? null : number
     }
 
     export const lookupInRecord = (record: Record<string, string>) => {
