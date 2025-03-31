@@ -1,15 +1,29 @@
 {
-  "name": "transformer",
-  "version": "1.0.0",
+  "name": "@xcrap/transformer",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/*",
+    "!/**/__tests__"
+  ],
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js"
+  },
   "scripts": {
     "test": "jest",
     "build": "rollup -c"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "xcrap",
+    "transformer",
+    "scrapy",
+    "web scraping"
+  ],
+  "author": "Marcuth",
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -21,10 +35,19 @@
     "rollup": "^4.38.0",
     "ts-jest": "^29.3.0",
     "ts-node": "^10.9.2",
+    "tslib": "^2.8.1",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "change-case": "^5.4.4",
     "date-fns": "^4.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xcrap-Cloud/transformer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Xcrap-Cloud/transformer/issues"
+  },
+  "homepage": "https://github.com/Xcrap-Cloud/transformer#readme"
 }
