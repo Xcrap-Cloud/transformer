@@ -1,0 +1,30 @@
+{
+  "name": "transformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.14",
+    "jest": "^29.7.0",
+    "rollup": "^4.38.0",
+    "ts-jest": "^29.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "change-case": "^5.4.4",
+    "date-fns": "^4.1.0"
+  }
+}
