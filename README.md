@@ -15,14 +15,17 @@ npm i @xcrap/transformer
 ### Transformers
 
 **Transformers** is a group of namespaces for transforming data, converting values ​​to other data types, modifying the way text is written, etc.
+
 #### StringTransformer
 
 **StringTransformer** is the namespace for handling string values, used to transform strings to other data types, modify text case, etc. #### DateTransformer
 
 **DateTransformer** is the namespace for dealing with dates, parsing, formatting and converting to various formats.
+
 #### NumberTransformer
 
 **NumberTransformer** is the namespace for dealing with numbers, addition, subtraction, multiplication, division, formatting etc.
+
 #### ArrayTransformer
 
 **ArrayTransformer** is the namespace for dealing with arrays.
