@@ -3,18 +3,15 @@
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/*",
     "!/**/__tests__"
   ],
-  "exports": {
-    "import": "./dist/esm/index.js",
-    "require": "./dist/cjs/index.js"
-  },
   "scripts": {
     "test": "jest",
-    "build": "rollup -c"
+    "build": "tsc"
   },
   "keywords": [
     "xcrap",
@@ -26,16 +23,11 @@
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-typescript": "^12.1.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.14",
     "jest": "^29.7.0",
-    "rollup": "^4.38.0",
     "ts-jest": "^29.3.0",
     "ts-node": "^10.9.2",
-    "tslib": "^2.8.1",
     "typescript": "^5.8.2"
   },
   "dependencies": {
