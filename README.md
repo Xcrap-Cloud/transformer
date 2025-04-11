@@ -20,6 +20,7 @@ npm i @xcrap/transformer
 
 **StringTransformer** is the namespace for handling string values, used to transform strings to other data types, modify text case, etc. #### DateTransformer
 
+
 **DateTransformer** is the namespace for dealing with dates, parsing, formatting and converting to various formats.
 
 #### NumberTransformer
