@@ -51,3 +51,5 @@ Validators is the group of function namespaces that validate some type of data, 
 ## 📝 License
 
 This project is licensed under the MIT License.
+
+O
