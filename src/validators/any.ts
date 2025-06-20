@@ -1,6 +1,6 @@
 export namespace AnyValidator {
     export const isString = (value: any) => typeof value === "string"
-    export const isNumber = (value: any) => typeof value === "number"
+    export const isNumber = (value: any) => typeof value === "number" && !isNaN(value) && value !== Infinity
     export const isArray = Array.isArray
     export const isBigint = (value: any) => typeof value === "bigint"
     export const isFunction = (value: any) => typeof value === "function"

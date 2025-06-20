@@ -19,8 +19,6 @@ describe("AnyValidator", () => {
             expect(AnyValidator.isNumber(123)).toBe(true)
             expect(AnyValidator.isNumber(0)).toBe(true)
             expect(AnyValidator.isNumber(-1)).toBe(true)
-            expect(AnyValidator.isNumber(NaN)).toBe(true)
-            expect(AnyValidator.isNumber(Infinity)).toBe(true)
         })
         it("should return false for non-numbers", () => {
             expect(AnyValidator.isNumber("123")).toBe(false)
@@ -28,6 +26,8 @@ describe("AnyValidator", () => {
             expect(AnyValidator.isNumber([])).toBe(false)
             expect(AnyValidator.isNumber(null)).toBe(false)
             expect(AnyValidator.isNumber(undefined)).toBe(false)
+            expect(AnyValidator.isNumber(NaN)).toBe(false)
+            expect(AnyValidator.isNumber(Infinity)).toBe(false)
         })
     })
 
