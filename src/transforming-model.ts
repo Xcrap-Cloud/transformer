@@ -91,7 +91,7 @@ export class TransformingModel {
                 localData.map((item) => value.model.transform(item, rootData))
             )
         } else {
-            return await value.model.transform(localData, rootData)
+            return await value.model.transform({}, rootData)
         }
     }
 
