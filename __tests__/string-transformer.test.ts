@@ -71,7 +71,6 @@ describe("StringTransformer", () => {
             expect(StringTransformer.toBoolean("no")).toBe(false)
         })
         it("throws for invalid boolean text", () => {
-            // Mock StringValidator.isBooleanText to return false
             jest.spyOn(require("../src/validators/string").StringValidator, "isBooleanText").mockReturnValue(false)
             expect(() => StringTransformer.toBoolean("maybe")).toThrow(/cannot be converted to boolean/i)
             jest.restoreAllMocks()
