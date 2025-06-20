@@ -1,4 +1,6 @@
-export type TransformerFunction = (data: Record<string, any>) => any | Promise<any>
+import { SkipFunction } from "."
+
+export type TransformerFunction = (data: Record<string, any>, skip: SkipFunction) => any | Promise<any>
 
 export type TransformationModelShapeValueBase = TransformerFunction[]
 
@@ -47,13 +49,23 @@ export class TransformingModel {
     }
 
     async transformValueBase(value: TransformationModelShapeValueBase, key: string, data: any) {
-        let result: any
+        let result: any = data[key]
 
         for (const transformer of value) {
-            result = await transformer({
+            let skiped = false
+
+            const skip = () => {
+                skiped = true
+            }
+
+            let tempResult = await transformer({
                 ...data,
                 [key]: result
-            })
+            }, skip)
+
+            if (!skiped) {
+                result = tempResult
+            }
         }
 
         return result

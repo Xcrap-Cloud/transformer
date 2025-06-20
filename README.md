@@ -1,52 +1,136 @@
+Here's the document translated into English:
+
+-----
+
 # 🕷️ Xcrap Transformer
 
-**Xcrap Transformer** is the data transformation package extracted from the Web Scraping framework **Xcrap**.
+**Xcrap Transformer** is the data transformation package for data extracted from the **Xcrap** Web Scraping framework.
 
 ## 📦 Installation
 
-There are no secrets to installing it, just use your preferred dependency manager. Here is an example of how it would be using NPM:
+Installation is straightforward. Use your preferred dependency manager. Here's an example of how you'd install it using NPM:
 
-```cmd
+```bash
 npm i @xcrap/transformer
 ```
 
 ## 🚀 Usage
 
-### Transformers
+Usage is similar to `@xcrap/parser`; we use declarative models to transform data. See an example below:
 
-**Transformers** is a group of namespaces for transforming data, converting values ​​to other data types, modifying the way text is written, etc.
+```ts
+import {
+    StringTransformer,
+    StringValidator,
+    AnyValidator,
+    Transformer,
+    TransformingModel,
+    transform
+} from "./src"
 
-#### StringTransformer
+const rawData = [
+    {
+        id: "1",
+        name_: "Marcuth ",
+        avatar_url: "/assets/users/1/avatar.png"
+    },
+    {
+        id: "2,0",
+        name_: "JavaScript  User ",
+        avatar_url: "/assets/users/2/avatar.png"
+    },
+    {
+        id: 3,
+        name_: "Pedro",
+        avatar_url: "/assets/users/3/avatar.png"
+    },
+]
 
-**StringTransformer** is the namespace for handling string values, used to transform strings to other data types, modify text case, etc. #### DateTransformer
+const transformingModel = new TransformingModel({
+    id: [ // return key
+        transform({
+            key: "id",  // at index 0 always raw data key
+            condition: (value) => AnyValidator.isString(value) && value.includes(","),
+            transformer: StringTransformer.replace(",", ".")
+        }),
+        transform({
+            key: "id", // transformed data key
+            condition: StringValidator.isNumeric,
+            transformer: StringTransformer.toNumber
+        })
+    ],
+    name: [ // return key
+        transform({
+            key: "name_", // at index 0 always raw data key
+            transformer: StringTransformer.collapseWhitespace
+        })
+    ],
+    avatarUrl: [ // return key
+        transform({
+            key: "avatar_url", // at index 0 always raw data key
+            transformer: StringTransformer.resolveUrl("https://baseurl.com/")
+        })
+    ]
+}).after({
+    append: {
+        role: "USER"
+    },
+    delete: [
+        "name_",
+        "avatar_url"
+    ]
+})
 
+const transformer = new Transformer(rawData)
 
-**DateTransformer** is the namespace for dealing with dates, parsing, formatting and converting to various formats.
+;(async () => {
+    const transformedData = await transformer.transform(transformingModel)
+    console.log(transformedData)
+})();
 
-#### NumberTransformer
+```
 
-**NumberTransformer** is the namespace for dealing with numbers, addition, subtraction, multiplication, division, formatting etc.
+**Expected output**:
 
-#### ArrayTransformer
+```js
+[
+  {
+    id: 1,
+    name: 'Marcuth',
+    avatarUrl: 'https://baseurl.com/assets/users/1/avatar.png',
+    role: 'USER'
+  },
+  {
+    id: 2,
+    name: 'JavaScript User',
+    avatarUrl: 'https://baseurl.com/assets/users/2/avatar.png',
+    role: 'USER'
+  },
+  {
+    id: 3,
+    name: 'Pedro',
+    avatarUrl: 'https://baseurl.com/assets/users/3/avatar.png',
+    role: 'USER'
+  }
+]
+```
 
-**ArrayTransformer** is the namespace for dealing with arrays.
+## 🧪 Tests
 
-### Validators
+Automated tests are located in `__tests__`. To run them:
 
-Validators is the group of function namespaces that validate some type of data, returning a boolean value that can be used for verification.
-
-#### StringValidator
-
-**StringValidator** is the namespace for dealing with the validation of string values.
+```bash
+npm run test
+```
 
 ## 🤝 Contributing
 
-- Want to contribute? Follow these steps:
-- Fork the repository.
-- Create a new branch (git checkout -b feature-new).
-- Commit your changes (git commit -m 'Add new feature').
-- Push to the branch (git push origin feature-new).
-- Open a Pull Request.
+  - Want to contribute? Follow these steps:
+  - Fork the repository.
+  - Create a new branch (git checkout -b feature-new).
+  - Commit your changes (git commit -m 'Add new feature').
+  - Push to the branch (git push origin feature-new).
+  - Open a Pull Request.
 
 ## 📝 License
 

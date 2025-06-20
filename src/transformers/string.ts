@@ -1,8 +1,6 @@
 import { StringValidator } from "../validators/string"
 
 export namespace StringTransformer {
-    export const raw = (value: string) => value
-
     export const toLowerCase = (value: string) => value.toLowerCase()
 
     export const toUpperCase = (value: string) => value.toUpperCase()

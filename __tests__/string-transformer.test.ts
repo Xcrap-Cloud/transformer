@@ -1,12 +1,6 @@
 import { StringTransformer } from "../src"
 
 describe("StringTransformer", () => {
-    describe("raw", () => {
-        it("returns the input string", () => {
-            expect(StringTransformer.raw("abc")).toBe("abc")
-        })
-    })
-
     describe("toLowerCase", () => {
         it("converts string to lower case", () => {
             expect(StringTransformer.toLowerCase("ABC")).toBe("abc")
