@@ -1,4 +1,4 @@
-import { SkipFunction } from "."
+import { Data, SkipFunction } from "."
 
 export type TransformerFunction = (data: Record<string, any>, skip: SkipFunction) => any | Promise<any>
 
@@ -24,60 +24,74 @@ export class TransformingModel {
 
     constructor(readonly shape: TransformingModelShape) {}
 
-    async transform(data: Record<string, any>): Promise<Record<string, any>> {
-        const result: Record<string, any> = {...data}
+    async transform(data: Record<string, any>, rootData?: Record<string, any>): Promise<Record<string, any>> {
+        const internalData: Data = {
+            local: {...data},
+            root: rootData || {...data}
+        }
 
         for (const key in this.shape) {
             const value = this.shape[key]
 
             if (Array.isArray(value)) {
-                result[key] = await this.transformValueBase(value, key, result)
+                internalData.local[key] = await this.transformValueBase(value, key, internalData)
             } else {
-                result[key] = await this.transformNestedValue(value, result)
+                internalData.local[key] = await this.transformNestedValue(value, internalData.local, internalData.root)
             }
         }
 
         for (const field of this.fieldsToDelete) {
-            delete result[field]
+            delete internalData.local[field]
         }
 
         for (const [key, value] of Object.entries(this.fieldsToAppend)) {
-            result[key] = value
+            internalData.local[key] = value
         }
 
-        return result
+        return internalData.local
     }
 
-    async transformValueBase(value: TransformationModelShapeValueBase, key: string, data: any) {
-        let result: any = data[key]
+    async transformValueBase(value: TransformationModelShapeValueBase, targetKey: string, data: Data) {
+        let currentTransformedValue: any = data.local[targetKey]
 
         for (const transformer of value) {
-            let skiped = false
+            let skipped = false
 
             const skip = () => {
-                skiped = true
+                skipped = true
             }
 
-            let tempResult = await transformer({
-                ...data,
-                [key]: result
-            }, skip)
+            const originalValueForThisIteration = currentTransformedValue
 
-            if (!skiped) {
-                result = tempResult
+            const inputForTransformer: Data = {
+                local: {
+                    ...data.local,
+                    [targetKey]: originalValueForThisIteration
+                },
+                root: data.root
+            }
+
+            let tempResult = await transformer(inputForTransformer, skip)
+
+            if (!skipped) {
+                currentTransformedValue = tempResult
             }
         }
 
-        return result
+        return currentTransformedValue
     }
 
-    async transformNestedValue(value: TransformationModelShapeNestedValue, data: any) {
+    async transformNestedValue(value: TransformationModelShapeNestedValue, localData: Record<string, any> | Record<string, any>[], rootData: Record<string, any>) {
         if (value.multiple) {
+            if (!Array.isArray(localData)) {
+                throw new Error("Input data for a 'multiple' nested model must be an array.")
+            }
+
             return await Promise.all(
-                data.map(value.model.transform.bind(this))
+                localData.map((item) => value.model.transform(item, rootData))
             )
         } else {
-            return await value.model.transform(data)
+            return await value.model.transform(localData, rootData)
         }
     }
 
