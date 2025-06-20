@@ -1,64 +1,129 @@
 import { StringTransformer } from "../src"
 
-describe("StringTransfomer", () => {
-    it("trim", () => {
-        const value = " Xpto "
-        const trimedValue = StringTransformer.trim(value)
-        expect(trimedValue).toEqual("Xpto")
+describe("StringTransformer", () => {
+    describe("raw", () => {
+        it("returns the input string", () => {
+            expect(StringTransformer.raw("abc")).toBe("abc")
+        })
     })
 
-    it("split", () => {
-        const value = "1,2,3,4,5"
-        const splitFuction = StringTransformer.split(",")
-        const splitedValue = splitFuction(value)
-        expect(splitedValue).toEqual(["1", "2", "3", "4", "5"])
+    describe("toLowerCase", () => {
+        it("converts string to lower case", () => {
+            expect(StringTransformer.toLowerCase("ABC")).toBe("abc")
+        })
     })
 
-    it("toBoolean", () => {
-        const value = "yes"
-        const booleanedValue = StringTransformer.toBoolean(value)
-        expect(booleanedValue).toEqual(true)
+    describe("toUpperCase", () => {
+        it("converts string to upper case", () => {
+            expect(StringTransformer.toUpperCase("abc")).toBe("ABC")
+        })
     })
 
-    it("toNumber", () => {
-        const value = "5.5"
-        const valueNumber = StringTransformer.toNumber(value)
-        expect(valueNumber).toEqual(5.5)
+    describe("trim", () => {
+        it("trims whitespace", () => {
+            expect(StringTransformer.trim("  abc  ")).toBe("abc")
+        })
     })
 
-    it("toLowerCase", () => {
-        const value = "ABcDe"
-        const lowerCaseValue = StringTransformer.toLowerCase(value)
-        expect(lowerCaseValue).toEqual("abcde")
+    describe("toNumber", () => {
+        it("converts string to number", () => {
+            expect(StringTransformer.toNumber("123")).toBe(123)
+        })
+        it("returns NaN for non-numeric string", () => {
+            expect(StringTransformer.toNumber("abc")).toBeNaN()
+        })
     })
 
-    it("toUpperCase", () => {
-        const value = "abCdE"
-        const upperCaseValue = StringTransformer.toUpperCase(value)
-        expect(upperCaseValue).toEqual("ABCDE")
+    describe("replace", () => {
+        it("replaces substring", () => {
+            expect(StringTransformer.replace("a", "b")("abc")).toBe("bbc")
+        })
+        it("replaces using regex", () => {
+            expect(StringTransformer.replace(/a/g, "b")("aab")).toBe("bbb")
+        })
     })
 
-    it("normalize", () => {
-        const value = " xPTó-ã "
-        const normalizedValue = StringTransformer.normalize(value)
-        expect(normalizedValue).toEqual("xpto-a")
+    describe("remove", () => {
+        it("removes substring", () => {
+            expect(StringTransformer.remove("a")("abc")).toBe("bc")
+        })
+        it("removes using regex", () => {
+            expect(StringTransformer.remove(/a/g)("aab")).toBe("b")
+        })
     })
 
-    it("removeHtmlTags", () => {
-        const value = "<p>Xpto</p>"
-        const withoutHtmlTags = StringTransformer.removeHtmlTags(value)
-        expect(withoutHtmlTags).toEqual("Xpto")
+    describe("split", () => {
+        it("splits string by separator", () => {
+            expect(StringTransformer.split(",")("a,b,c")).toEqual(["a", "b", "c"])
+        })
     })
 
-    it("sanitize", () => {
-        const value = "  #Xpt_o! "
-        const sanitizedValue = StringTransformer.sanitize(value)
-        expect(sanitizedValue).toEqual("Xpto")
+    describe("toBoolean", () => {
+        it("returns true for 'true', '1', 'yes' (case-insensitive)", () => {
+            expect(StringTransformer.toBoolean("true")).toBe(true)
+            expect(StringTransformer.toBoolean("1")).toBe(true)
+            expect(StringTransformer.toBoolean("yes")).toBe(true)
+            expect(StringTransformer.toBoolean("TRUE")).toBe(true)
+        })
+        it("returns false for other boolean-like values", () => {
+            expect(StringTransformer.toBoolean("false")).toBe(false)
+            expect(StringTransformer.toBoolean("0")).toBe(false)
+            expect(StringTransformer.toBoolean("no")).toBe(false)
+        })
+        it("throws for invalid boolean text", () => {
+            // Mock StringValidator.isBooleanText to return false
+            jest.spyOn(require("../src/validators/string").StringValidator, "isBooleanText").mockReturnValue(false)
+            expect(() => StringTransformer.toBoolean("maybe")).toThrow(/cannot be converted to boolean/i)
+            jest.restoreAllMocks()
+        })
     })
 
-    it("collapseWhitespace", () => {
-        const value = "  Hello    World "
-        const collapsedValue = StringTransformer.collapseWhitespace(value)
-        expect(collapsedValue).toEqual("Hello World")
+    describe("normalize", () => {
+        it("normalizes string (removes accents, lowercases, trims)", () => {
+            expect(StringTransformer.normalize("  ÁÉÍÓÚ  ")).toBe("aeiou")
+        })
+    })
+
+    describe("removeHtmlTags", () => {
+        it("removes HTML tags", () => {
+            expect(StringTransformer.removeHtmlTags("<b>abc</b>")).toBe("abc")
+            expect(StringTransformer.removeHtmlTags("a<br>b")).toBe("ab")
+        })
+    })
+
+    describe("sanitize", () => {
+        it("removes non-alphanumeric characters", () => {
+            expect(StringTransformer.sanitize("a!b@c# 123")).toBe("abc 123")
+        })
+    })
+
+    describe("collapseWhitespace", () => {
+        it("collapses multiple whitespaces", () => {
+            expect(StringTransformer.collapseWhitespace("a   b   c")).toBe("a b c")
+        })
+    })
+
+    describe("lookupInRecord", () => {
+        const record = { a: 1, b: 2 }
+        const lookup = StringTransformer.lookupInRecord(record)
+        it("returns value for existing key", () => {
+            expect(lookup("a")).toBe(1)
+        })
+        it("throws for missing key", () => {
+            expect(() => lookup("c")).toThrow(/does not have 'c' as key/i)
+        })
+    })
+
+    describe("resolveUrl", () => {
+        const resolve = StringTransformer.resolveUrl("https://example.com/")
+        it("resolves relative URL", () => {
+            expect(resolve("path")).toBe("https://example.com/path")
+        })
+        it("resolves absolute URL", () => {
+            expect(resolve("https://other.com/abc")).toBe("https://other.com/abc")
+        })
+        it("throws for invalid URL", () => {
+            expect(() => resolve("::::")).toThrow(/Invalid URL/)
+        })
     })
 })

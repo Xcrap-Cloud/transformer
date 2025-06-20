@@ -11,6 +11,11 @@ export namespace StringTransformer {
 
     export const toNumber = Number
 
+    export const replace = (searchValue: string | RegExp, replaceValue: string) => (value: string) =>
+        value.replace(searchValue, replaceValue)
+
+    export const remove = (searchValue: string | RegExp) => (value: string) => value.replace(searchValue, "")
+
     export const split = (separator: string) => (value: string) => value.split(separator)
 
     export const toBoolean = (value: string) => {
@@ -42,8 +47,7 @@ export namespace StringTransformer {
 
     export const collapseWhitespace = (value: string) => value.replace(/\s+/g, " ").trim()
 
-
-    export const lookupInRecord = (record: Record<string, string>) => {
+    export const lookupInRecord = (record: Record<string, any>) => {
         return (value: string) => {
             if (!(value in record)) {
                 throw new Error(`Record does not have '${value}' as key!`)
@@ -56,7 +60,13 @@ export namespace StringTransformer {
     export const resolveUrl = (baseUrl: string) => {
         return (value: string) => {
             try {
-                return new URL(value, baseUrl).href
+                const resolvedUrl =  new URL(value, baseUrl).href
+
+                if (!StringValidator.isUrl(resolvedUrl)) {
+                    throw new Error(`Invalid URL: '${value}' with base '${baseUrl}'`)
+                }
+
+                return resolvedUrl
             } catch (error) {
                 throw new Error(`Invalid URL: '${value}' with base '${baseUrl}'`)
             }
