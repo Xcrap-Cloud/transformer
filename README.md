@@ -1,7 +1,3 @@
-Here's the document translated into English:
-
------
-
 # 🕷️ Xcrap Transformer
 
 **Xcrap Transformer** is the data transformation package for data extracted from the **Xcrap** Web Scraping framework.
