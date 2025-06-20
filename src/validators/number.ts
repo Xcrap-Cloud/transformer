@@ -1,7 +1,17 @@
 export namespace NumberValidator {
-    export const isValid = (value: number) => !isNaN(value)
+    export const isValid = (value: number) => !isNaN(value) && !isInfinity(value)
 
     export const isInteger = (value: number) => Number.isInteger(value)
+
+    export const isFloat = (value: number) => isValid(value) && !Number.isInteger(value)
+
+    export const isInfinity = (value: number) => {
+        return isPositiveInfinity(value) || isNegativeInfinity(value)
+    }
+
+    export const isPositiveInfinity = (value: number) => value === Infinity
+
+    export const isNegativeInfinity = (value: number) => value === -Infinity
 
     export const isGreaterThan = (min: number) => {
         return (value: number) => value > min
