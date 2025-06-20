@@ -21,9 +21,9 @@ export class TransformingModel {
             const value = this.shape[key]
 
             if (Array.isArray(value)) {
-                result[key] = await this.transformValueBase(value, data[key])
+                result[key] = await this.transformValueBase(value, data)
             } else {
-                result[key] = await this.transformNestedValue(value, data[key])
+                result[key] = await this.transformNestedValue(value, data)
             }
         }
 
@@ -42,10 +42,10 @@ export class TransformingModel {
 
     async transformNestedValue(value: TransformationModelShapeNestedValue, data: any) {
         if (value.multiple) {
-            console.log(await value.model.transform(data[0]))
+            console.log(data)
 
             return await Promise.all(
-                data.map(value.model.transform)
+                data.map(value.model.transform.bind(this))
             )
         } else {
             return await value.model.transform(data)

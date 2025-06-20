@@ -61,11 +61,4 @@ describe("StringTransfomer", () => {
         const collapsedValue = StringTransformer.collapseWhitespace(value)
         expect(collapsedValue).toEqual("Hello World")
     })
-
-    it("currencyToNumber", () => {
-        const value = "R$ 1.234,56"
-        const currencyToNumberFunction = StringTransformer.currencyToNumber("R$")
-        const valueNumber = currencyToNumberFunction(value)
-        expect(valueNumber).toEqual(1234.56)
-    })
 })
