@@ -1,6 +1,6 @@
 import { Data, SkipFunction } from "."
 
-export type TransformerFunction = (data: Record<string, any>, skip: SkipFunction) => any | Promise<any>
+export type TransformerFunction = (data: Data, skip: SkipFunction) => any | Promise<any>
 
 export type TransformationModelShapeValueBase = TransformerFunction[]
 
