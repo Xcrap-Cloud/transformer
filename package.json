@@ -1,6 +1,6 @@
 {
   "name": "@xcrap/transformer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Xcrap Transformer is the data transformation package extracted from the Web Scraping framework Xcrap.",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
