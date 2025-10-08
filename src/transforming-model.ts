@@ -5,6 +5,7 @@ export type TransformerFunction = (data: Data, skip: SkipFunction) => any | Prom
 export type TransformationModelShapeValueBase = TransformerFunction[]
 
 export type TransformationModelShapeNestedValue = {
+    key: string
     multiple?: boolean
     model: TransformingModel
 }
@@ -88,10 +89,10 @@ export class TransformingModel {
             }
 
             return await Promise.all(
-                localData.map((item) => value.model.transform(item, rootData))
+                localData.map((item) => value.model.transform(item, rootData[value.key]))
             )
         } else {
-            return await value.model.transform({}, rootData)
+            return await value.model.transform({}, rootData[value.key])
         }
     }
 
