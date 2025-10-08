@@ -84,15 +84,15 @@ export class TransformingModel {
 
     async transformNestedValue(value: TransformationModelShapeNestedValue, localData: Record<string, any> | Record<string, any>[], rootData: Record<string, any>) {
         if (value.multiple) {
-            if (!Array.isArray(localData)) {
+            if (!Array.isArray((localData as Record<string, any>)[value.key])) {
                 throw new Error("Input data for a 'multiple' nested model must be an array.")
             }
 
             return await Promise.all(
-                localData.map((item) => value.model.transform(item, rootData[value.key]))
+                (localData as Record<string, any>[]).map((item) => value.model.transform(item, item))
             )
         } else {
-            return await value.model.transform({}, rootData[value.key])
+            return await value.model.transform({}, (localData as Record<string, any>)[value.key])
         }
     }
 
