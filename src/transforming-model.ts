@@ -89,7 +89,7 @@ export class TransformingModel {
             }
 
             return await Promise.all(
-                (localData as Record<string, any>[]).map((item) => value.model.transform(item, item))
+                ((localData as Record<string, any>)[value.key] as Record<string, any>[]).map((item) => value.model.transform(item, item))
             )
         } else {
             return await value.model.transform({}, (localData as Record<string, any>)[value.key])
