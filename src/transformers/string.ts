@@ -16,6 +16,22 @@ export namespace StringTransformer {
 
     export const split = (separator: string) => (value: string) => value.split(separator)
 
+    export const extract = (pattern: RegExp, index: number = 0) => (value: string) => {
+        const match = value.match(pattern)
+
+        if (!match) {
+            throw new Error(`Pattern '${pattern}' did not match value '${value}'`)
+        }
+
+        const params = match[index]
+
+        if (!params) {
+            throw new Error(`Pattern '${pattern}' matched but index ${index} is out of bounds.`)
+        }
+
+        return params
+    }
+
     export const toBoolean = (value: string) => {
         if (!StringValidator.isBooleanText(value)) {
             throw new Error(`'${value}' cannot be converted to boolean!`)
@@ -58,7 +74,7 @@ export namespace StringTransformer {
     export const resolveUrl = (baseUrl: string) => {
         return (value: string) => {
             try {
-                const resolvedUrl =  new URL(value, baseUrl).href
+                const resolvedUrl = new URL(value, baseUrl).href
 
                 if (!StringValidator.isUrl(resolvedUrl)) {
                     throw new Error(`Invalid URL: '${value}' with base '${baseUrl}'`)
