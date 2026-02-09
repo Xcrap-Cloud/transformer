@@ -86,4 +86,12 @@ export namespace StringTransformer {
             }
         }
     }
+
+    export const substr = (startIndex: number, length?: number) => (value: string) => {
+        if (length) {
+            return value.substring(startIndex, length)
+        }
+
+        return value.substring(startIndex)
+    }
 }
