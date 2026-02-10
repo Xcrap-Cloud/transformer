@@ -17,7 +17,7 @@ export namespace StringValidator {
     }
 
     export const isUrl = (value: string) => {
-        const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/
+        const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-./?%&=()]*)?$/
         return urlRegex.test(value)
     }
 
