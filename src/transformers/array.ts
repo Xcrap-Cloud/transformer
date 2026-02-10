@@ -58,4 +58,8 @@ export namespace ArrayTransformer {
     export const sum = (value: number[]) => {
         return value.reduce((acc, item) => acc + item, 0)
     }
+
+    export const slice = (start: number, end: number) => (value: any[]) => {
+        return value.slice(start, end)
+    }
 }
