@@ -207,4 +207,27 @@ describe("TransformingModel", () => {
         const numericKeys = nestedKeys.filter(k => /^\d+$/.test(k)) // e.g., '0', '1'
         expect(numericKeys).toHaveLength(0)
     })
+
+    it("should keep root scope immutable when local keys are transformed", async () => {
+        let rootValueInsideTransformer: any
+
+        const model = new TransformingModel({
+            value: [
+                // First transformer: changes value to 100
+                (data: Data) => 100
+            ],
+            checkRoot: [
+                // Second transformer: checks root.value. Should still be 10.
+                (data: Data) => {
+                    rootValueInsideTransformer = data.root.value
+                    return true
+                }
+            ]
+        })
+
+        const input = { value: 10 }
+        await model.transform(input)
+
+        expect(rootValueInsideTransformer).toBe(10)
+    })
 })
