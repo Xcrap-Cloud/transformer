@@ -14,9 +14,9 @@ export namespace NumberTransformer {
 
     export const toInteger = (value: number) => Math.floor(value)
 
-    export const multiply = (multiplier: number) => (value: number) => multiplier * value
+    export const multiply = (multiplier: number) => (value: number) => value * multiplier
 
-    export const divide = (divider: number) => (value: number) => divider * value
+    export const divide = (divider: number) => (value: number) => value / divider
 
     export const add = (addend: number) => (value: number) => value + addend
 
@@ -78,7 +78,7 @@ export namespace NumberTransformer {
                 minimumFractionDigits: decimals,
                 maximumFractionDigits: decimals,
             })
-            
+
             return formatter.format(value)
         }
     }

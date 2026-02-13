@@ -5,7 +5,7 @@ export type TransformerFunction = (data: Data, skip: SkipFunction) => any | Prom
 export type TransformationModelShapeValueBase = TransformerFunction[]
 
 export type TransformationModelShapeNestedValue = {
-    key: string
+    key?: string
     multiple?: boolean
     model: TransformingModel
 }
@@ -26,6 +26,8 @@ export class TransformingModel {
     constructor(readonly shape: TransformingModelShape) { }
 
     async transform(data: Record<string, any>, rootData?: Record<string, any>): Promise<Record<string, any>> {
+        const isNested = !!rootData
+        
         const internalData: Data = {
             local: (data && typeof data === "object" && !Array.isArray(data)) ? { ...data } : {},
             root: rootData || ((data && typeof data === "object" && !Array.isArray(data)) ? { ...data } : {})
@@ -47,6 +49,18 @@ export class TransformingModel {
 
         for (const [key, value] of Object.entries(this.fieldsToAppend)) {
             internalData.local[key] = value
+        }
+
+        if (isNested) {
+            const result: Record<string, any> = {}
+            const resultKeys = new Set([...Object.keys(this.shape), ...Object.keys(this.fieldsToAppend)])
+
+            for (const key of resultKeys) {
+                if (key in internalData.local) {
+                    result[key] = internalData.local[key]
+                }
+            }
+            return result
         }
 
         return internalData.local
@@ -82,15 +96,18 @@ export class TransformingModel {
 
     async transformNestedValue(value: TransformationModelShapeNestedValue, localData: Record<string, any> | Record<string, any>[], rootData: Record<string, any>) {
         if (value.multiple) {
-            if (!Array.isArray((localData as Record<string, any>)[value.key])) {
+            const data = value.key ? { local: rootData[value.key], root: rootData } : { local: localData, root: rootData }
+
+            if (!Array.isArray(data.local)) {
                 throw new Error("Input data for a 'multiple' nested model must be an array.")
             }
 
             return await Promise.all(
-                ((localData as Record<string, any>)[value.key] as Record<string, any>[]).map((item) => value.model.transform(item, rootData))
+                data.local.map((item) => value.model.transform(item, data.root))
             )
         } else {
-            return await value.model.transform((localData as Record<string, any>)[value.key], rootData)
+            const data = value.key ? { local: rootData[value.key], root: rootData } : { local: localData, root: rootData }
+            return await value.model.transform(data.local, data.root)
         }
     }
 

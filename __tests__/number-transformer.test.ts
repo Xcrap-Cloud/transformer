@@ -22,9 +22,9 @@ describe("NumberTransformer", () => {
     })
 
     describe("divide", () => {
-        it("should multiply the value by divider (possible bug)", () => {
+        it("should divide the value by divider", () => {
             const div2 = NumberTransformer.divide(2)
-            expect(div2(5)).toBe(10)
+            expect(div2(10)).toBe(5)
         })
     })
 

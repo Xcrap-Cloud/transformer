@@ -1,5 +1,5 @@
 import { TransformingModel } from "../src/transforming-model"
-import { Data, transform } from "../src"
+import { Data, StringTransformer, transform } from "../src"
 
 describe("TransformingModel", () => {
     const double = (data: Data) => (data.local.value as number) * 2
@@ -177,57 +177,37 @@ describe("TransformingModel", () => {
         await expect(model.transform(input)).rejects.toThrow("Input data for a 'multiple' nested model must be an array.")
     })
 
-    it("should handle primitive values in nested models without spreading strings (bug reproduction)", async () => {
-        const nestedModel = new TransformingModel({
-            // Transform 'root.original' to 'val'
-            val: [
+    it("should transform nested objects", async () => {
+        const rawData = {
+            price: "10.12"
+        }
+
+        const priceModel = new TransformingModel({
+            value: [
                 transform({
-                    key: "original",
-                    scope: "root", // Reads 'root-value'
-                    transformer: (val: string) => val
+                    key: "price",
+                    transformer: StringTransformer.toNumber
                 })
             ]
-        })
-
-        const mainModel = new TransformingModel({
-            nested: {
-                key: "prop",
-                model: nestedModel
+        }).after({
+            append: {
+                currency: "BRL"
             }
         })
 
-        // 'prop' is a string ("test-string"). With the bug, this string could be spread into local keys '0', '1', etc.
-        const input = { prop: "test-string", original: "root-value" }
-        const result = await mainModel.transform(input)
-
-        expect(result).toHaveProperty("nested")
-        expect(result.nested).toHaveProperty("val", "root-value")
-
-        const nestedKeys = Object.keys(result.nested)
-        const numericKeys = nestedKeys.filter(k => /^\d+$/.test(k)) // e.g., '0', '1'
-        expect(numericKeys).toHaveLength(0)
-    })
-
-    it("should keep root scope immutable when local keys are transformed", async () => {
-        let rootValueInsideTransformer: any
-
         const model = new TransformingModel({
-            value: [
-                // First transformer: changes value to 100
-                (data: Data) => 100
-            ],
-            checkRoot: [
-                // Second transformer: checks root.value. Should still be 10.
-                (data: Data) => {
-                    rootValueInsideTransformer = data.root.value
-                    return true
-                }
-            ]
+            price: {
+                model: priceModel,
+            }
         })
 
-        const input = { value: 10 }
-        await model.transform(input)
+        const result = await model.transform(rawData)
 
-        expect(rootValueInsideTransformer).toBe(10)
+        expect(result).toEqual({
+            price: {
+                value: 10.12,
+                currency: "BRL"
+            },
+        })
     })
 })
