@@ -23,7 +23,7 @@ export class TransformingModel {
     private readonly fieldsToDelete: string[] = []
     private readonly fieldsToAppend: Record<string, any> = {}
 
-    constructor(readonly shape: TransformingModelShape) {}
+    constructor(readonly shape: TransformingModelShape) { }
 
     async transform(data: Record<string, any>, rootData?: Record<string, any>): Promise<Record<string, any>> {
         const internalData: Data = {
@@ -62,12 +62,10 @@ export class TransformingModel {
                 skipped = true
             }
 
-            const originalValueForThisIteration = currentTransformedValue
-
             const inputForTransformer: Data = {
                 local: {
                     ...data.local,
-                    [targetKey]: originalValueForThisIteration
+                    [targetKey]: currentTransformedValue
                 },
                 root: data.root
             }
