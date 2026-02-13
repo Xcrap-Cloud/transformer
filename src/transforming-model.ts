@@ -27,8 +27,8 @@ export class TransformingModel {
 
     async transform(data: Record<string, any>, rootData?: Record<string, any>): Promise<Record<string, any>> {
         const internalData: Data = {
-            local: {...data},
-            root: rootData || {...data}
+            local: { ...data },
+            root: rootData || { ...data }
         }
 
         for (const key in this.shape) {
@@ -89,10 +89,10 @@ export class TransformingModel {
             }
 
             return await Promise.all(
-                ((localData as Record<string, any>)[value.key] as Record<string, any>[]).map((item) => value.model.transform(item, item))
+                ((localData as Record<string, any>)[value.key] as Record<string, any>[]).map((item) => value.model.transform(item, rootData))
             )
         } else {
-            return await value.model.transform({}, (localData as Record<string, any>)[value.key])
+            return await value.model.transform((localData as Record<string, any>)[value.key], rootData)
         }
     }
 

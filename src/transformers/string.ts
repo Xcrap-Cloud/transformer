@@ -94,4 +94,28 @@ export namespace StringTransformer {
 
         return value.substring(startIndex)
     }
+
+    export const addPrefix = (prefix: string) => (value: string) => {
+        return prefix + value
+    }
+
+    export const addSuffix = (suffix: string) => (value: string) => {
+        return value + suffix
+    }
+
+    export const removePrefix = (prefix: string) => (value: string) => {
+        if (value.startsWith(prefix)) {
+            return value.substring(prefix.length)
+        }
+
+        return value
+    }
+
+    export const removeSuffix = (suffix: string) => (value: string) => {
+        if (value.endsWith(suffix)) {
+            return value.substring(0, value.length - suffix.length)
+        }
+
+        return value
+    }
 }

@@ -1,7 +1,7 @@
 import { TransformingModel } from "./transforming-model"
 
-export class Transformer {
-    constructor(readonly data: Record<string, any> | Record<string, any>[]) {}
+export class Transformer<T extends Record<string, any> | Record<string, any>[]> {
+    constructor(readonly data: T) {}
 
     async transform(transformingModel: TransformingModel) {
         if (Array.isArray(this.data)) {
