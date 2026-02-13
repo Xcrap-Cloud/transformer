@@ -8,6 +8,14 @@ export type TransformationModelShapeNestedValue = {
     key?: string
     multiple?: boolean
     model: TransformingModel
+    condition?: undefined
+    default?: undefined
+} | {
+    condition: (data: Data) => boolean
+    default: any
+    key?: string
+    multiple?: boolean
+    model: TransformingModel
 }
 
 export type TransformingModelShape = {
@@ -27,7 +35,7 @@ export class TransformingModel {
 
     async transform(data: Record<string, any>, rootData?: Record<string, any>): Promise<Record<string, any>> {
         const isNested = !!rootData
-        
+
         const internalData: Data = {
             local: (data && typeof data === "object" && !Array.isArray(data)) ? { ...data } : {},
             root: rootData || ((data && typeof data === "object" && !Array.isArray(data)) ? { ...data } : {})
@@ -95,6 +103,14 @@ export class TransformingModel {
     }
 
     async transformNestedValue(value: TransformationModelShapeNestedValue, localData: Record<string, any> | Record<string, any>[], rootData: Record<string, any>) {
+        if (value.condition) {
+            const data = value.key ? { local: rootData[value.key], root: rootData } : { local: localData, root: rootData }
+
+            if (!value.condition(data)) {
+                return value.default
+            }
+        }
+
         if (value.multiple) {
             const data = value.key ? { local: rootData[value.key], root: rootData } : { local: localData, root: rootData }
 
@@ -107,6 +123,11 @@ export class TransformingModel {
             )
         } else {
             const data = value.key ? { local: rootData[value.key], root: rootData } : { local: localData, root: rootData }
+
+            if (value.condition && !value.condition(data)) {
+                return null
+            }
+
             return await value.model.transform(data.local, data.root)
         }
     }
