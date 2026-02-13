@@ -27,8 +27,8 @@ export class TransformingModel {
 
     async transform(data: Record<string, any>, rootData?: Record<string, any>): Promise<Record<string, any>> {
         const internalData: Data = {
-            local: { ...data },
-            root: rootData || { ...data }
+            local: (data && typeof data === "object" && !Array.isArray(data)) ? { ...data } : {},
+            root: rootData || ((data && typeof data === "object" && !Array.isArray(data)) ? { ...data } : {})
         }
 
         for (const key in this.shape) {

@@ -1,5 +1,5 @@
 import { TransformingModel } from "../src/transforming-model"
-import { Data } from "../src"
+import { Data, transform } from "../src"
 
 describe("TransformingModel", () => {
     const double = (data: Data) => (data.local.value as number) * 2
@@ -175,5 +175,36 @@ describe("TransformingModel", () => {
         const input = { items: "not-an-array" }
 
         await expect(model.transform(input)).rejects.toThrow("Input data for a 'multiple' nested model must be an array.")
+    })
+
+    it("should handle primitive values in nested models without spreading strings (bug reproduction)", async () => {
+        const nestedModel = new TransformingModel({
+            // Transform 'root.original' to 'val'
+            val: [
+                transform({
+                    key: "original",
+                    scope: "root", // Reads 'root-value'
+                    transformer: (val: string) => val
+                })
+            ]
+        })
+
+        const mainModel = new TransformingModel({
+            nested: {
+                key: "prop",
+                model: nestedModel
+            }
+        })
+
+        // 'prop' is a string ("test-string"). With the bug, this string could be spread into local keys '0', '1', etc.
+        const input = { prop: "test-string", original: "root-value" }
+        const result = await mainModel.transform(input)
+
+        expect(result).toHaveProperty("nested")
+        expect(result.nested).toHaveProperty("val", "root-value")
+
+        const nestedKeys = Object.keys(result.nested)
+        const numericKeys = nestedKeys.filter(k => /^\d+$/.test(k)) // e.g., '0', '1'
+        expect(numericKeys).toHaveLength(0)
     })
 })
